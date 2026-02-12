@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
@@ -48,21 +49,29 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ✅ UPDATED FUNCTION
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validate()) {
       const user = JSON.parse(localStorage.getItem("authData"));
+
       if (
         user &&
         loginData.email === user.email &&
         loginData.password === user.password
       ) {
+        // Save login info
         localStorage.setItem("loginData", JSON.stringify(loginData));
-        navigate("/Dashboard");
+
+        // ✅ Save username for Navbar
+        const username = user.name || loginData.email.split("@")[0];
+        localStorage.setItem("username", username);
+
         alert("Login successfully...!");
+        navigate("/Dashboard");
       } else {
-        alert("invalid email or password");
+        alert("Invalid email or password");
       }
     }
   };
@@ -74,10 +83,9 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         {/* Email */}
         <div className="form-group">
-          <label htmlFor="email">Email Address</label>
+          <label>Email Address</label>
           <input
             type="email"
-            id="email"
             name="email"
             value={loginData.email}
             placeholder="Enter your email"
@@ -86,13 +94,12 @@ const Login = () => {
           {errors.email && <span className="error">{errors.email}</span>}
         </div>
 
-        {/* Password with eye icon */}
+        {/* Password */}
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label>Password</label>
           <div style={{ position: "relative" }}>
             <input
               type={showPassword ? "text" : "password"}
-              id="password"
               name="password"
               value={loginData.password}
               placeholder="Enter your password"
@@ -107,14 +114,14 @@ const Login = () => {
                 top: "50%",
                 transform: "translateY(-50%)",
                 cursor: "pointer",
-                fontSize: "18px",
-                color: "#666",
               }}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-          {errors.password && <span className="error">{errors.password}</span>}
+          {errors.password && (
+            <span className="error">{errors.password}</span>
+          )}
         </div>
 
         <button type="submit" className="btn-primary">
