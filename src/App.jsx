@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import AuthGuard from "./auth/AuthGuard";
+import CreatePost from "./component/CreatePost.jsx";
 
 // Default redirect
 const DefaultRoute = () => {
@@ -53,6 +54,15 @@ function App() {
         </AuthGuard>
       ),
     },
+    {
+  path: "/createpost",
+  element: (
+    <AuthGuard required={true}>
+      <CreatePost />
+    </AuthGuard>
+  ),
+},
+
 
     {
       path: "*",
