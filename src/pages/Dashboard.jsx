@@ -92,7 +92,7 @@ const Dashboard = () => {
                         className="post-card-image"
                       />
 
-                      <div className="post-action">
+<div className="post-actions">
                         <button className="action-btn edit-btn">
                           <MdEdit size={22} color="#ffffff" />
                         </button>
