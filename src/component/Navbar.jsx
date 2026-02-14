@@ -27,8 +27,8 @@ const Navbar = () => {
             <FaHome /> Home
           </NavLink>
 
-          <NavLink to="/create-post" className="nav-item">
-            <FaPlusSquare /> Create Post
+          <NavLink to="/createpost" className="nav-item">
+            <FaPlusSquare onClick={() => navigate("/createpost")}/> Create Post
           </NavLink>
         </div>
 

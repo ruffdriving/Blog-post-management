@@ -62,6 +62,14 @@ function App() {
     </AuthGuard>
   ),
 },
+{
+  path:"/edit-post/:id",
+  element:(
+    <AuthGuard required={true}>
+    <CreatePost />
+    </AuthGuard>
+  )
+},
 
 
     {
