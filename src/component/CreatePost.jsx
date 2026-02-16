@@ -76,32 +76,39 @@ const CreatePost = ({ authData, name }) => {
     setImagePreview(null);
   };
 
+useEffect(() => {
 
-  useEffect(() => {
+  if (!id) {
+    setIsEditing(false);
+    return;
+  }
 
-    setIsEditing(true);
+  setIsEditing(true);
 
-    const fetchPost = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/posts/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch post");
+  const fetchPost = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/posts/${id}`);
+      if (!res.ok) throw new Error("Failed to fetch post");
 
-        const post = await res.json();
-        setPostData({
-          title: post.title,
-          author: post.author,
-          description: post.description || post.content || "",
-          imageUrl: post.image && post.image.startsWith("http") ? post.image : "",
-          imageType: post.image && post.image.startsWith("http") ? "url" : "file",
-        });
-        setImagePreview(post.image);
-      } catch (err) {
-        console.log("Error fetching post:", err);
-      }
-    };
+      const post = await res.json();
 
-    fetchPost();
-  }, [id]);
+      setPostData({
+        title: post.title || "",
+        author: post.author || "",
+        description: post.description || "",
+        imageUrl: post.image || "",
+        imageType: "url",
+      });
+
+      setImagePreview(post.image || null);
+    } catch (err) {
+      console.log("Error fetching post:", err);
+    }
+  };
+
+  fetchPost();
+}, [id]);
+
 
   // ---------------------------
   // Form submit (create ya update)
@@ -110,7 +117,13 @@ const CreatePost = ({ authData, name }) => {
     e.preventDefault();
     setLoading(true);
 
-    const dataToSend = { ...postData, image: imagePreview };
+const dataToSend = {
+  title: postData.title,
+  author: postData.author,
+  description: postData.description,
+  image: imagePreview || postData.imageUrl,
+  createdAt: new Date().toLocaleDateString()
+};
 
     try {
       const url = isEditing ? `http://localhost:5000/posts/${id}` : "http://localhost:5000/posts";
@@ -135,6 +148,8 @@ const CreatePost = ({ authData, name }) => {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="create-post-container">
       <header className="form-header">
         <h1>{isEditing ? "Edit Post" : "Create New Post"}</h1>
@@ -212,6 +227,7 @@ const CreatePost = ({ authData, name }) => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

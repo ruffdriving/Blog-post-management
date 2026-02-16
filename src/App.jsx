@@ -10,6 +10,8 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import AuthGuard from "./auth/AuthGuard";
 import CreatePost from "./component/CreatePost.jsx";
+import PostDetails from "./pages/PostDetails.jsx";
+import Analytics from "./pages/Analytics.jsx";
 
 // Default redirect
 const DefaultRoute = () => {
@@ -62,6 +64,22 @@ function App() {
     </AuthGuard>
   ),
 },
+   {
+  path: "/analytics",
+  element: (
+    <AuthGuard required={true}>
+<Analytics/>    </AuthGuard>
+  ),
+},
+{
+  path: "/postdetails/:id",
+  element: (
+    <AuthGuard required={true}>
+     </AuthGuard>
+  ),
+},
+
+
 {
   path:"/edit-post/:id",
   element:(

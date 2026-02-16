@@ -41,6 +41,9 @@ const Dashboard = () => {
   const handleEdit = (postId) => {
     navigate(`/edit-post/${postId}`);
   };
+   const handleRead = (postId) => {
+    navigate(`/postdetails/${postId}`);
+  };
 
   // ===============================
   // DELETE POST
@@ -139,7 +142,8 @@ const Dashboard = () => {
 
                       <p className="post-card-description">{post.description}</p>
 
-                      <button className="read-more-btn">Read more</button>
+                      <button className="read-more-btn"   onClick={() => handleRead(post.id)}
+>Read more</button>
                     </div>
                   </div>
                 ))

@@ -30,7 +30,11 @@ const Navbar = () => {
           <NavLink to="/createpost" className="nav-item">
             <FaPlusSquare onClick={() => navigate("/createpost")}/> Create Post
           </NavLink>
+            <NavLink  className="nav-item">
+            <FaPlusSquare /> Analytics
+          </NavLink>
         </div>
+        
 
         <div className="navbar-actions">
           <span className="user-name">
