@@ -12,6 +12,7 @@ import AuthGuard from "./auth/AuthGuard";
 import CreatePost from "./component/CreatePost.jsx";
 import PostDetails from "./pages/PostDetails.jsx";
 import Analytics from "./pages/Analytics.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 // Default redirect
 const DefaultRoute = () => {
@@ -24,6 +25,7 @@ const DefaultRoute = () => {
 };
 
 function App() {
+  
   const route = createBrowserRouter([
     {
       path: "/",
@@ -57,38 +59,38 @@ function App() {
       ),
     },
     {
-  path: "/createpost",
-  element: (
-    <AuthGuard required={true}>
-      <CreatePost />
-    </AuthGuard>
-  ),
-},
-   {
-  path: "/analytics",
-  element: (
-    <AuthGuard required={true}>
-<Analytics/>    </AuthGuard>
-  ),
-},
-{
-  path: "/postdetails/:id",
-  element: (
-    <AuthGuard required={true}>
-     </AuthGuard>
-  ),
-},
+      path: "/createpost",
+      element: (
+        <AuthGuard required={true}>
+          <CreatePost />
+        </AuthGuard>
+      ),
+    },
+    {
+      path: "/analytics",
+      element: (
+        <AuthGuard required={true}>
+          <Analytics />
+        </AuthGuard>
+      ),
+    },
+    {
+      path: "/postdetails/:id",
+      element: (
+        <AuthGuard required={true}>
+          <PostDetails />
+        </AuthGuard>
+      ),
+    },
 
-
-{
-  path:"/edit-post/:id",
-  element:(
-    <AuthGuard required={true}>
-    <CreatePost />
-    </AuthGuard>
-  )
-},
-
+    {
+      path: "/edit-post/:id",
+      element: (
+        <AuthGuard required={true}>
+          <CreatePost />
+        </AuthGuard>
+      ),
+    },
 
     {
       path: "*",
@@ -101,7 +103,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={route} />;
+return (
+  <ThemeProvider>
+    <RouterProvider router={route} />
+  </ThemeProvider>
+);
 }
 
 export default App;
