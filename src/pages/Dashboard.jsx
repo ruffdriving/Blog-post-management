@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../component/Navbar";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaStar } from "react-icons/fa";
 import { MdEdit, MdDelete } from "react-icons/md";
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
@@ -121,6 +121,14 @@ const Dashboard = () => {
                     <div className="post-image-container">
                       <img src={post.image} alt={post.title} className="post-card-image" />
 
+<button
+  className={`favourite-btn ${
+    favourites.includes(post.id) ? "active" : ""
+  }`}
+>
+  <FaStar size={22} color="#ffffff" />
+</button>
+
                       <div className="post-actions">
                         <button className="action-btn edit-btn" onClick={() => handleEdit(post.id)}>
                           <MdEdit size={22} color="#ffffff" />
@@ -129,6 +137,7 @@ const Dashboard = () => {
                         <button className="action-btn delete-btn" onClick={() => handleDelete(post.id)}>
                           <MdDelete size={22} color="#ffffff" />
                         </button>
+
                       </div>
                     </div>
 
