@@ -4,16 +4,51 @@ import { FaPlus, FaStar } from "react-icons/fa";
 import { MdEdit, MdDelete } from "react-icons/md";
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false); // Fix: initial false
-  const [error, setError] = useState(null); // Fix: initial null
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null); 
+  const [favourites, setFavourites] = useState([]);
   const navigate = useNavigate();
 
-  // ===============================
+  const toggleFavourite = (e, postId, postTitle) => {
+    e.stopPropagation(); // Prevent event bubbling
+    let newFavourites;
+    
+    // Convert postId to string for consistent comparison
+    const postIdStr = String(postId);
+    
+    if (favourites.includes(postIdStr)) {
+      // Remove from favourites
+      newFavourites = favourites.filter(id => id !== postIdStr);
+      toast.error(`❌ Removed "${postTitle}" from favourites`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } else {
+      // Add to favourites
+      newFavourites = [...favourites, postIdStr];
+      toast.success(`✨ Added "${postTitle}" to favourites`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
+    setFavourites(newFavourites);
+    localStorage.setItem('favourite', JSON.stringify(newFavourites));
+  };
+
   // FETCH POSTS
-  // ===============================
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -26,30 +61,33 @@ const Dashboard = () => {
     } catch (err) {
       setError(err.message);
       console.log("Error fetching posts:", err);
+      toast.error("Failed to load posts");
     } finally {
       setLoading(false);
     }
   };
 
+  // Load posts and favourites on mount
   useEffect(() => {
     fetchPosts();
+    
+    // Load favourites from localStorage
+    const savedFavourites = JSON.parse(localStorage.getItem('favourite') || '[]');
+    setFavourites(savedFavourites);
   }, []);
 
-  // ===============================
   // EDIT POST
-  // ===============================
   const handleEdit = (postId) => {
     navigate(`/edit-post/${postId}`);
   };
-   const handleRead = (postId) => {
+  
+  const handleRead = (postId) => {
     navigate(`/postdetails/${postId}`);
   };
 
-  // ===============================
   // DELETE POST
-  // ===============================
-  const handleDelete = async (postId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+  const handleDelete = async (postId, postTitle) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${postTitle}"?`);
     if (!confirmDelete) return;
 
     try {
@@ -59,13 +97,21 @@ const Dashboard = () => {
 
       if (!response.ok) throw new Error("Failed to delete post");
 
-      // Remove deleted post from UI instantly
+      // Remove deleted post from UI
       setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+      
+      // Also remove from favourites if present
+      const postIdStr = String(postId);
+      if (favourites.includes(postIdStr)) {
+        const updatedFavourites = favourites.filter(id => id !== postIdStr);
+        setFavourites(updatedFavourites);
+        localStorage.setItem('favourite', JSON.stringify(updatedFavourites));
+      }
 
-      alert("Post deleted successfully!");
+      toast.success(`🗑️ "${postTitle}" deleted successfully!`);
     } catch (error) {
       console.log("Delete error:", error);
-      alert("Error deleting post");
+      toast.error("Error deleting post");
     }
   };
 
@@ -93,8 +139,8 @@ const Dashboard = () => {
             <span className="dash-number">{posts.length}</span>
           </div>
           <div className="dash-card">
-            <h3>Community Posts</h3>
-            <span className="dash-number">{posts.length}</span>
+            <h3>Favourites</h3>
+            <span className="dash-number">{favourites.length}</span>
           </div>
         </div>
 
@@ -121,23 +167,23 @@ const Dashboard = () => {
                     <div className="post-image-container">
                       <img src={post.image} alt={post.title} className="post-card-image" />
 
-<button
-  className={`favourite-btn ${
-    favourites.includes(post.id) ? "active" : ""
-  }`}
->
-  <FaStar size={22} color="#ffffff" />
-</button>
+                      <button
+                        className={`favourite-btn ${
+                          favourites.includes(String(post.id)) ? 'active' : ''
+                        }`}
+                        onClick={(e) => toggleFavourite(e, post.id, post.title)}
+                      >
+                        <FaStar size={22} color="#ffffff" />
+                      </button>
 
                       <div className="post-actions">
                         <button className="action-btn edit-btn" onClick={() => handleEdit(post.id)}>
                           <MdEdit size={22} color="#ffffff" />
                         </button>
 
-                        <button className="action-btn delete-btn" onClick={() => handleDelete(post.id)}>
+                        <button className="action-btn delete-btn" onClick={() => handleDelete(post.id, post.title)}>
                           <MdDelete size={22} color="#ffffff" />
                         </button>
-
                       </div>
                     </div>
 
@@ -151,8 +197,9 @@ const Dashboard = () => {
 
                       <p className="post-card-description">{post.description}</p>
 
-                      <button className="read-more-btn"   onClick={() => handleRead(post.id)}
->Read more</button>
+                      <button className="read-more-btn" onClick={() => handleRead(post.id)}>
+                        Read more
+                      </button>
                     </div>
                   </div>
                 ))

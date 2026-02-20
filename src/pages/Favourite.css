@@ -81,7 +81,7 @@
   box-shadow: 0 10px 20px rgba(229, 62, 62, 0.2);
 }
 
-.favouritr-grid {
+.favourite-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 3rem;
@@ -309,3 +309,4 @@
         grid-template-columns: 1fr;
     }
 }
+
